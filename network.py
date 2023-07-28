@@ -51,22 +51,25 @@ class Network:
             self.activations[i+1] = self.sigmoid(np.dot(self.weights[i], self.activations[i]) + self.biases[i])
     
     def cost(self, expected):
-        return sum((self.activations[-1]-expected)**2)
+        return sum((self.activations[-1] - expected)**2)
     
     def backpropagation(self, expected):
         # 1) Calculate dcost_dweights and dcost_dbiases for each training example in a batch
         # 2) Add them together and average them
         # 3) Output the gradients for the gradient descent algorithm to nudge them
 
-        # Output layer
+        # Calculate dcost_dactivations for the output layer
         dcost_dactivations = 2 * (self.activations[-1] - expected)
-        dactivations_dz = self.dsigmoid(np.dot(self.weights[-1], self.activations[-2]) + self.biases[-1])
-        dz_dweights = self.activations[-2]
-        dz_dbiases = 1
 
-        self.dcost_dweights[-1] += dz_dweights[np.newaxis,:] * (dactivations_dz * dcost_dactivations)[:,np.newaxis]
-        self.dcost_dbiases[-1] += dz_dbiases * dactivations_dz * dcost_dactivations
+        # Loop backward through the layers to calculate dcost_dweights and dcost_dbiases
+        for i in range(-1, -len(self.layers), -1):
+            dactivations_dz = self.dsigmoid(np.dot(self.weights[i], self.activations[i-1]) + self.biases[i])
+            dz_dweights = self.activations[i-1]
+            dz_dbiases = 1
 
-        # Hidden layers
-        # dz_dactivations = self.weights[-1]
-        # dcost_dactivations = sum(dz_dactivations * (dactivations_dz * dcost_dactivations)[:,np.newaxis])
+            self.dcost_dweights[i] += dz_dweights[np.newaxis,:] * (dactivations_dz * dcost_dactivations)[:,np.newaxis]
+            self.dcost_dbiases[i] += dz_dbiases * dactivations_dz * dcost_dactivations
+
+            # Calculate dcost_dactivations for hidden layer
+            dz_dactivations = self.weights[i]
+            dcost_dactivations = sum(dz_dactivations * (dactivations_dz * dcost_dactivations)[:,np.newaxis])
