@@ -29,7 +29,7 @@ for i in range(0, n_batches):
     batches.append(batch)
 
 # Setup network
-network = Network([784,32,10], 0.1)
+network = Network([784,32,32,10], 0.1)
 network.train_network(10, batches)
 
 plt.plot(network.costs)

@@ -55,31 +55,17 @@ class Network:
         return 1 / (1 + np.exp(-x))
     
     def dsigmoid(self, x):
-        # return np.exp(x) / (np.exp(x) + 1)
         sig = self.sigmoid(x)
         return sig * (1 - sig)
     
-    def softmax(self, x):
-        # Compute the softmax of vector x in a numerically stable way
-        shiftx = x - np.max(x)
-        exps = np.exp(shiftx)
-        return exps / np.sum(exps)
-    
-    def dsoftmax(self, softmax, y):
-        return softmax - y
-    
     def calculate_cost(self, expected_output):
         cost = sum((self.activations[-1] - expected_output)**2) # Mean square error
-        # cost = -sum(expected_output * np.log(self.activations[-1])) # Cross entropy
         return cost
     
     def feedforward(self, input_layer):
         self.activations[0] = input_layer
         for i in range(0, len(self.layers) - 1):
-            if i == len(self.layers) - 2:
-                self.activations[i+1] = self.softmax(np.dot(self.weights[i], self.activations[i]) + self.biases[i])
-            else:
-                self.activations[i+1] = self.sigmoid(np.dot(self.weights[i], self.activations[i]) + self.biases[i])
+            self.activations[i+1] = self.sigmoid(np.dot(self.weights[i], self.activations[i]) + self.biases[i])
     
     def backpropagation(self, expected_output):
         # 1) Calculate dcost_dweights and dcost_dbiases for each training example in a batch
@@ -88,14 +74,10 @@ class Network:
 
         # Calculate dcost_dactivations for the output layer
         dcost_dactivations = 2 * (self.activations[-1] - expected_output)
-        # dactivations_dz = self.dsigmoid(np.dot(self.weights[i], self.activations[i-1]) + self.biases[i]) # Sigmoid output layer
-        # dactivations_dz = self.dsoftmax(self.activations[-1], expected_output) # Softmax output layer
 
         # Loop backward through the layers to calculate dcost_dweights and dcost_dbiases
         for i in range(-1, -len(self.layers), -1):
             dactivations_dz = self.dsigmoid(np.dot(self.weights[i], self.activations[i-1]) + self.biases[i]) # Sigmoid output layer
-            #if i != -1:
-            #    dactivations_dz = self.dsigmoid(np.dot(self.weights[i], self.activations[i-1]) + self.biases[i]) # Softmax output layer
 
             dz_dweights = self.activations[i-1]
             dz_dbiases = 1
@@ -148,8 +130,8 @@ class Network:
             self.cost += self.calculate_cost(sample['expected_output'])
     
     def train_network(self, epochs, batches):
-        for i in range(0, epochs):
-            print(f"Epoch: {i}\n")
+        for epoch in range(0, epochs):
+            print(f"Epoch: {epoch}\n")
             for batch in batches:
                 self.process_batch(batch)
                 self.costs.append(self.cost / len(batch))
@@ -160,6 +142,3 @@ class Network:
                 self.update_weights_and_biases()
                 self.reset_gradients()
                 print(f"Cost: {self.costs[-1]}")
-
-# Need to implement sample class
-# Need to implement batch class
