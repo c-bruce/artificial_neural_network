@@ -1,5 +1,4 @@
 import numpy as np
-import math
 
 class Network:
     def __init__(self, layers, learning_rate):
@@ -59,7 +58,7 @@ class Network:
         return sig * (1 - sig)
     
     def calculate_cost(self, expected_output):
-        cost = sum((self.activations[-1] - expected_output)**2) # Mean square error
+        cost = np.sum((self.activations[-1] - expected_output)**2) # L2-norm cost function
         return cost
     
     def feedforward(self, input_layer):
@@ -68,10 +67,6 @@ class Network:
             self.activations[i+1] = self.sigmoid(np.dot(self.weights[i], self.activations[i]) + self.biases[i])
     
     def backpropagation(self, expected_output):
-        # 1) Calculate dcost_dweights and dcost_dbiases for each training example in a batch
-        # 2) Add them together and average them
-        # 3) Output the gradients for the gradient descent algorithm to nudge them
-
         # Calculate dcost_dactivations for the output layer
         dcost_dactivations = 2 * (self.activations[-1] - expected_output)
 
@@ -87,7 +82,7 @@ class Network:
 
             # Calculate dcost_dactivations for hidden layer
             dz_dactivations = self.weights[i]
-            dcost_dactivations = sum(dz_dactivations * (dactivations_dz * dcost_dactivations)[:,np.newaxis])
+            dcost_dactivations = np.sum(dz_dactivations * (dactivations_dz * dcost_dactivations)[:,np.newaxis], axis=0)
     
     def average_gradients(self, n):
         # Calculate the average gradients for a batch containing n samples
@@ -135,8 +130,6 @@ class Network:
             for batch in batches:
                 self.process_batch(batch)
                 self.costs.append(self.cost / len(batch))
-                if math.isnan(self.costs[-1]):
-                    break
                 self.reset_cost()
                 self.average_gradients(len(batch))
                 self.update_weights_and_biases()
