@@ -37,7 +37,8 @@ def plot_neural_network(layer_sizes, display_nodes, weights, activations, backgr
                 activation = activations[i][j]
                 ax.scatter(x, y, color=background_color, edgecolor=node_color, linewidth=1, s=node_size, zorder=1)  # Node appearance updated
                 ax.scatter(x, y, color=node_color, edgecolor=node_color, alpha=abs(activation), linewidth=1, s=node_size, zorder=1)  # Node appearance updated
-                if plot_lables: ax.text(x-0.02, y-0.1, f"$a_{j}^{{({i})}}$")
+                # if plot_lables: ax.text(x-0.02, y-0.1, f"$a_{j}^{{({i})}}$")
+                if plot_lables: ax.text(x-0.04, y-0.05, f"$a_{j}^{{({i})}}$")
     
     # Draw connections using the calculated y-coordinates
     for i in range(num_layers - 1):
@@ -78,16 +79,16 @@ def plot_neural_network(layer_sizes, display_nodes, weights, activations, backgr
 # plt.show()
 
 # Neural network structure
-layer_sizes = [5, 3, 3, 2]
-display_nodes = [5, 3, 3, 2]
-network = Network(layer_sizes, 0.1)
-network.feedforward(np.random.uniform(0,1,(5)))
-weights = [array.T*0.5 for array in network.weights]
-activations = network.activations
-fig, ax = plot_neural_network(layer_sizes, display_nodes, weights, activations, positive_weight_color='red', negative_weight_color='blue')
-ax.set_xticklabels(['Input Layer', 'Hidden Layer 1', 'Hidden Layer 2', 'Output Layer'])
-plt.savefig('network.png', dpi=600)
-plt.show()
+# layer_sizes = [5, 3, 3, 2]
+# display_nodes = [5, 3, 3, 2]
+# network = Network(layer_sizes, 0.1)
+# network.feedforward(np.random.uniform(0,1,(5)))
+# weights = [array.T*0.5 for array in network.weights]
+# activations = network.activations
+# fig, ax = plot_neural_network(layer_sizes, display_nodes, weights, activations, positive_weight_color='red', negative_weight_color='blue')
+# ax.set_xticklabels(['Input Layer', 'Hidden Layer 1', 'Hidden Layer 2', 'Output Layer'])
+# plt.savefig('network.png', dpi=600)
+# plt.show()
 
 # Calculating a_0^(1)
 # layer_sizes = [4,3]
@@ -103,3 +104,22 @@ plt.show()
 # plt.tight_layout()
 # plt.savefig('network.png', dpi=600)
 # plt.show()
+
+# Single neuron layers
+layer_sizes = [1, 1, 1]
+display_nodes = [1, 1, 1]
+weights = [np.zeros([1,1]) + 0.5, np.zeros([1,1]) + 0.5]
+activations = [np.zeros(1), np.zeros(1), np.zeros(1)]
+fig, ax = plot_neural_network(layer_sizes, display_nodes, weights, activations, positive_weight_color='k', negative_weight_color='k', node_size=1200)
+plt.text(2.6,0.0,'$w^{(L)}$')
+plt.text(2.6,0.2,'$w^{(L-1)}$')
+plt.text(1.96,1,'$b^{(L)}$')
+plt.text(0.925,1,'$b^{(L-1)}$')
+plt.text(-0.075,1,'$b^{(L-2)}$')
+#plt.text(2.6,0.8,'$a^{(L)}=\sigma(w^{(L)}a^{(L-1)}+b^{(L)})$')
+plt.text(1.96,0.475,'$a^{(L)}$')
+plt.text(0.925,0.475,'$a^{(L-1)}$')
+plt.text(-0.075,0.475,'$a^{(L-2)}$')
+plt.text(-0.25,0.475,'$...$')
+plt.savefig('network.png', dpi=600)
+plt.show()

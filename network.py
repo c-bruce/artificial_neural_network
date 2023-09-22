@@ -124,8 +124,8 @@ class Network:
             self.backpropagation(sample['expected_output'])
             self.cost += self.calculate_cost(sample['expected_output'])
     
-    def train_network(self, epochs, batches):
-        for epoch in range(0, epochs):
+    def train_network(self, n_epochs, batches):
+        for epoch in range(0, n_epochs):
             print(f"Epoch: {epoch}\n")
             for batch in batches:
                 self.process_batch(batch)
